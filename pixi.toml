@@ -1,0 +1,91 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "containers"
+platforms = ["linux-64", "linux-aarch64"]
+version = "0.1.0"
+
+[tasks.build]
+args = [ "environment" ]
+cmd="apptainer build --arch arm64 --build-arg environment={{ environment }} --force {{ environment }}.sif base.def"
+
+[tasks.build-all]
+depends-on = [
+    { task = "build", args = ["samtools"] },
+    { task = "build", args = ["samblaster"] },
+    { task = "build", args = ["bwa-mem2"] },
+    { task = "build", args = ["fastp"] },
+    { task = "build", args = ["fastqc"] },
+    { task = "build", args = ["freebayes"] },
+    { task = "build", args = ["snpeff"] },
+    { task = "build", args = ["snpsift"] },
+    { task = "build", args = ["bcftools"] },
+    { task = "build", args = ["cnvkit"] },
+]
+
+[dependencies]
+
+[environments]
+dev = ["dev"]
+samtools = ["samtools"]
+samblaster = ["samblaster"]
+bwa-mem2 = ["bwa-mem2"]
+fastp = ["fastp"]
+fastqc = ["fastqc"]
+freebayes = ["freebayes"]
+snpeff = ["snpeff"]
+snpsift = ["snpsift"]
+bcftools = ["bcftools"]
+cnvkit = ["cnvkit"]
+
+[feature.dev]
+dependencies = {apptainer = ">=1.4.5,<2"}
+
+[feature.samtools]
+dependencies = {samtools = ">=1.23,<2"}
+activation.env.APP_ENTRYPOINT = "samtools"
+activation.env.APP_TEST_CMD = "samtools --version"
+
+[feature.samblaster]
+dependencies = {samblaster = ">=0.1.26,<0.2"}
+activation.env.APP_ENTRYPOINT = "samblaster"
+activation.env.APP_TEST_CMD = "samblaster --version"
+
+[feature.bwa-mem2]
+dependencies = {bwa-mem2 = ">=2.3,<3"}
+activation.env.APP_ENTRYPOINT = "bwa-mem2"
+activation.env.APP_TEST_CMD = "bwa-mem2 version"
+
+[feature.fastp]
+dependencies = {fastp = ">=1.1.0,<2"}
+activation.env.APP_ENTRYPOINT = "fastp"
+activation.env.APP_TEST_CMD = "fastp --version"
+
+[feature.fastqc]
+dependencies = {fastqc = ">=0.12.1,<0.13"}
+activation.env.APP_ENTRYPOINT = "fastqc"
+activation.env.APP_TEST_CMD = "fastqc --version"
+
+[feature.freebayes]
+dependencies = {freebayes = ">=1.3.10,<2"}
+activation.env.APP_ENTRYPOINT = "freebayes"
+activation.env.APP_TEST_CMD = "freebayes --version"
+
+[feature.snpeff]
+dependencies = {snpeff = ">=5.4.0a,<6"}
+activation.env.APP_ENTRYPOINT = "snpEff"
+activation.env.APP_TEST_CMD = "snpEff -version"
+
+[feature.snpsift]
+dependencies = {snpsift = ">=5.4.0a,<6"}
+activation.env.APP_ENTRYPOINT = "SnpSift"
+activation.env.APP_TEST_CMD = "which SnpSift"
+
+[feature.bcftools]
+dependencies = {bcftools = ">=1.23,<2"}
+activation.env.APP_ENTRYPOINT = "bcftools"
+activation.env.APP_TEST_CMD = "bcftools --version"
+
+[feature.cnvkit]
+dependencies = {cnvkit = ">=0.9.12,<0.10"}
+activation.env.APP_ENTRYPOINT = "cnvkit.py"
+activation.env.APP_TEST_CMD = "cnvkit.py version"

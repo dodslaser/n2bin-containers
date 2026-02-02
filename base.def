@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: ghcr.io/prefix-dev/pixi:bookworm-slim
+Stage: build
+
+%files
+  ./pixi.toml /app/
+  ./pixi.lock /app/
+
+%post
+  cd /app/
+  pixi install -e {{ environment }} --locked
+  pixi shell-hook -e {{ environment }} -s bash > /app/pixi_env.sh
+
+Bootstrap: docker
+From: ghcr.io/prefix-dev/pixi:bookworm-slim
+Stage: final
+
+%files from build
+  /app/.pixi/envs/{{ environment }} /app/.pixi/envs/{{ environment }}
+  /app/pixi_env.sh /app/pixi_env.sh
+
+%post
+  chmod +x /app/pixi_env.sh
+
+%runscript
+  . /app/pixi_env.sh && $APP_ENTRYPOINT "$@"
+
+%test
+  . /app/pixi_env.sh && $APP_TEST_CMD
+
