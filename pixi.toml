@@ -6,7 +6,7 @@ version = "0.1.0"
 
 [tasks.build]
 args = [ "environment" ]
-cmd="apptainer build --arch arm64 --build-arg environment={{ environment }} --force {{ environment }}.sif base.def"
+cmd="apptainer build --arch amd64 --build-arg environment={{ environment }} --force {{ environment }}.sif base.def"
 
 [tasks.build-all]
 depends-on = [
