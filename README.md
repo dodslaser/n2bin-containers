@@ -4,25 +4,35 @@ Build apptainer containers for the N2BIN courses.
 
 # Building the containers
 
+> [!NOTE]
+> These instructions assume you have cloned the repository and navigated to it.
+
+
 The easiest way to build the containers is to use [Pixi](https://pixi.sh):
+
 
 If you don't have pixi, it can be installed by running:
 
 ```bash
 curl -fsSL https://pixi.sh/install.sh | sh
+```
+
+Start a pixi shell in the `dev` environment:
+
+```bash
 pixi shell --environment dev
 ```
 
 To build a specific container (e.g. samtools), run:
 
 ```bash
-pixi task run build samtools
+pixi run build samtools
 ```
 
 To build all containers, run:
 
-```
-pixi task run build-all
+```bash
+pixi run build-all
 ```
 
 You can also build the containers directly with `apptainer`:
