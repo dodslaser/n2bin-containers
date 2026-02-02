@@ -19,12 +19,12 @@ Stage: final
   /app/.pixi/envs/{{ environment }} /app/.pixi/envs/{{ environment }}
   /app/pixi_env.sh /app/pixi_env.sh
 
-%post
-  chmod +x /app/pixi_env.sh
+%environment
+  . /app/pixi_env.sh
 
 %runscript
-  . /app/pixi_env.sh && $APP_ENTRYPOINT "$@"
+  $APP_ENTRYPOINT "$@"
 
 %test
-  . /app/pixi_env.sh && $APP_TEST_CMD
+  $APP_TEST_CMD
 
