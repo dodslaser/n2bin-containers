@@ -2,6 +2,14 @@
 
 Build apptainer containers for the N2BIN courses.
 
+# Using the containers
+
+The containers are published to GHCR and can be pulled and run with apptainer. For example, to run the samtools container:
+
+```bash
+apptainer run oras://ghcr.io/dodslaser/n2bin-samtools:latest <SAMTOOLS ARGS>
+```
+
 # Building the containers
 
 > [!NOTE]
