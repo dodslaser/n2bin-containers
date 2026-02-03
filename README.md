@@ -17,12 +17,6 @@ If you don't have pixi, it can be installed by running:
 curl -fsSL https://pixi.sh/install.sh | sh
 ```
 
-Start a pixi shell in the `dev` environment:
-
-```bash
-pixi shell --environment dev
-```
-
 To build a specific container (e.g. samtools), run:
 
 ```bash
@@ -54,13 +48,13 @@ pixi run -e samtools samtools --version
 To add a new container, create a new feature `[feature.<container_name>]` to `pixi.toml`, specifying the required packages and dependencies.
 
 ```bash
-pixi add  --feature <container_name> <package1> <package2> ...
+pixi add --feature <container_name> <package1> <package2> ...
 ```
 
 Then add an environment under the `[environments]` section, referencing the feature you created (and possibly more features if you want a multi-tool container).
 
 ```bash
-pixi workspace environment add <container_name> --feature <container_name>
+pixi workspace environment add <container_name> --feature <container_name> --no-default-feature
 ```
 Pixi won't solve dependencies for the feature until it is referenced by an environment, so after adding the environment we need to upgrade the feature to get the latest package versions.
 
