@@ -27,4 +27,3 @@ Stage: final
 
 %test
   $APP_TEST_CMD
-

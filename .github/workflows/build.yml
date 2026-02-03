@@ -1,0 +1,47 @@
+name: Build and Push Containers
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'pixi.toml'
+    - 'pixi.lock'
+    - 'base.def'
+
+jobs:
+  list-environments:
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{ steps.list-environments.outputs.environments }}
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    - name: List Environments
+      id: list-environments
+      run: echo environments=$(pipx run tomlq -c '.environments | keys' pixi.toml) | tee -a "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: list-environments
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.list-environments.outputs.environments) }}
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    - uses: prefix-dev/setup-pixi@a0af7a228712d6121d37aba47adf55c1332c9c2e # v0.9.4
+      with:
+        pixi-version: v0.62.2
+        cache: true
+
+    - name: Build Container
+      run: |
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+        pixi run build ${{ matrix.environment }}
+
+    - name: Push to Apptainer Registry
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | pixi run apptainer registry login -u ${{ github.actor }} --password-stdin oras://ghcr.io
+        pixi run apptainer push ${{ matrix.environment }}.sif oras://ghcr.io/${{ github.repository_owner }}/n2bin-${{ matrix.environment }}:latest
